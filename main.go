@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/ktr0731/go-fuzzyfinder"
@@ -20,17 +21,17 @@ func main() {
 
 func run() error {
 	args := os.Args[1:]
-	filePath := "go.mod"
+	gomodPath := "go.mod"
 	if len(args) != 0 {
-		filePath = args[0]
+		gomodPath = args[0]
 	}
 
-	content, err := os.ReadFile(filePath)
+	content, err := os.ReadFile(gomodPath)
 	if err != nil {
 		return fmt.Errorf("read file: %w", err)
 	}
 
-	ast, err := modfile.Parse(filePath, content, nil)
+	ast, err := modfile.Parse(gomodPath, content, nil)
 	if err != nil {
 		return fmt.Errorf("parse: %w", err)
 	}
@@ -63,9 +64,12 @@ func run() error {
 
 	fmt.Println("go get", strings.Join(selected, " "))
 
+	workDir := filepath.Dir(gomodPath)
 	cmd := exec.Command("go", append([]string{"get"}, selected...)...)
+	cmd.Dir = workDir
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
+
 	err = cmd.Run()
 	if err != nil {
 		return fmt.Errorf("run go get: %w", err)
