@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ktr0731/go-fuzzyfinder"
+	"github.com/koki-develop/go-fzf"
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/module"
 )
@@ -46,14 +46,15 @@ func run() error {
 		modules = append(modules, req.Mod)
 	}
 
-	indices, err := fuzzyfinder.FindMulti(
-		modules,
-		func(i int) string {
-			mod := modules[i]
-			return mod.Path + " " + mod.Version
-		},
-		fuzzyfinder.WithHeader("Select modules to update"),
-	)
+	f, err := fzf.New(fzf.WithNoLimit(true))
+	if err != nil {
+		return err
+	}
+
+	indices, err := f.Find(modules, func(i int) string {
+		mod := modules[i]
+		return mod.Path + " " + mod.Version
+	})
 	if err != nil {
 		return fmt.Errorf("fuzzy select: %w", err)
 	}
