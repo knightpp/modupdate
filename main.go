@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -55,6 +56,10 @@ func run() error {
 	)
 	if err != nil {
 		return fmt.Errorf("fuzzy select: %w", err)
+	}
+
+	if len(indices) == 0 {
+		return errors.New("no modules selected")
 	}
 
 	selected := make([]string, len(indices))
