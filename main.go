@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,7 +14,15 @@ import (
 	"golang.org/x/mod/module"
 )
 
+var selectAll bool
+
+func init() {
+	flag.BoolVar(&selectAll, "a", false, "selects everything by default")
+}
+
 func main() {
+	flag.Parse()
+
 	if err := run(); err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		os.Exit(1)
@@ -21,7 +30,7 @@ func main() {
 }
 
 func run() error {
-	args := os.Args[1:]
+	args := flag.Args()
 	gomodPath := "go.mod"
 	if len(args) != 0 {
 		gomodPath = args[0]
@@ -51,10 +60,15 @@ func run() error {
 		return err
 	}
 
+	var findOpts []fzf.FindOption
+	if selectAll {
+		findOpts = append(findOpts, fzf.WithDefaultSelectionAll())
+	}
+
 	indices, err := f.Find(modules, func(i int) string {
 		mod := modules[i]
 		return mod.Path + " " + mod.Version
-	})
+	}, findOpts...)
 	if err != nil {
 		return fmt.Errorf("fuzzy select: %w", err)
 	}
