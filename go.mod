@@ -28,3 +28,5 @@ require (
 	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 )
+
+replace github.com/koki-develop/go-fzf => github.com/knightpp/go-fzf v0.0.0-20230423122235-1f90389d6f08

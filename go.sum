@@ -16,8 +16,8 @@ github.com/charmbracelet/lipgloss v0.7.1/go.mod h1:yG0k3giv8Qj8edTCbbg6AlQ5e8KNW
 github.com/containerd/console v1.0.3 h1:lIr7SlA5PxZyMV30bDW0MGbiOPXwc63yRuCP0ARubLw=
 github.com/containerd/console v1.0.3/go.mod h1:7LqA/THxQ86k76b8c/EMSiaJ3h1eZkMkXar0TQ1gf3U=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/koki-develop/go-fzf v0.13.1 h1:n4yFd66s18Ut7McgXnp8Fbt6WNJhQ+4K08y5OKyKE48=
-github.com/koki-develop/go-fzf v0.13.1/go.mod h1:Ja3wMGPm0mxieKuHbcVaGefdAr5xkCgS9Iu3vDWfEPU=
+github.com/knightpp/go-fzf v0.0.0-20230423122235-1f90389d6f08 h1:KTUd/p1OoDblDzKY7KL1KzmJPAgnOIko/Vc2utNh1wo=
+github.com/knightpp/go-fzf v0.0.0-20230423122235-1f90389d6f08/go.mod h1:Ja3wMGPm0mxieKuHbcVaGefdAr5xkCgS9Iu3vDWfEPU=
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
