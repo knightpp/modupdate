@@ -17,11 +17,13 @@ import (
 var (
 	selectAll          bool
 	selectAllNoConfirm bool
+	dryRun             bool
 )
 
 func init() {
 	flag.BoolVar(&selectAll, "a", false, "selects everything by default")
 	flag.BoolVar(&selectAllNoConfirm, "A", false, "selects and updates everything by default without UI")
+	flag.BoolVar(&dryRun, "d", false, "does not run go get if true")
 }
 
 func main() {
@@ -129,6 +131,10 @@ func runUI(modules []module.Version) ([]module.Version, error) {
 
 func runGoGet(path string, selected []string) error {
 	fmt.Println("go get", strings.Join(selected, " "))
+
+	if dryRun {
+		return nil
+	}
 
 	workDir := filepath.Dir(path)
 	cmd := exec.Command("go", append([]string{"get"}, selected...)...)
