@@ -110,7 +110,7 @@ func runUI(modules []module.Version) ([]module.Version, error) {
 
 	var findOpts []fzf.FindOption
 	if selectAll {
-		findOpts = append(findOpts, fzf.WithDefaultSelectionAll())
+		findOpts = append(findOpts, fzf.WithPreselectAll(true))
 	}
 
 	indices, err := f.Find(modules, func(i int) string {
