@@ -16,8 +16,8 @@ github.com/containerd/console v1.0.3/go.mod h1:7LqA/THxQ86k76b8c/EMSiaJ3h1eZkMkX
 github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 h1:q2hJAaP1k2wIvVRd/hEHD7lacgqrCPS+k8g1MndzfWY=
 github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/knightpp/go-fzf v0.0.0-20230517192518-18a7befac696 h1:h5NnsjlZCqvALRVk7eiX5R5JFo8oQOK5iVRxRDvjp0w=
-github.com/knightpp/go-fzf v0.0.0-20230517192518-18a7befac696/go.mod h1:gHSmSIjLlzapr0wuFe5tOGlBvHlv7ceACQVacK1tBqo=
+github.com/koki-develop/go-fzf v0.14.0 h1:ADLBpIMBNGb1X1grDkmjrpB6s4wFFfQ49U0eRQq6Tho=
+github.com/koki-develop/go-fzf v0.14.0/go.mod h1:gHSmSIjLlzapr0wuFe5tOGlBvHlv7ceACQVacK1tBqo=
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=

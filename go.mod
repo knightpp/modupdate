@@ -3,7 +3,7 @@ module github.com/knightpp/modupdate
 go 1.20
 
 require (
-	github.com/koki-develop/go-fzf v0.13.2
+	github.com/koki-develop/go-fzf v0.14.0
 	golang.org/x/mod v0.10.0
 )
 
@@ -28,5 +28,3 @@ require (
 	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 )
-
-replace github.com/koki-develop/go-fzf => github.com/knightpp/go-fzf v0.0.0-20230517192518-18a7befac696
