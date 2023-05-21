@@ -18,21 +18,21 @@ var (
 	selectAll          bool
 	selectAllNoConfirm bool
 	dryRun             bool
-	version            bool
+	flagVersion        bool
 )
 
 func init() {
 	flag.BoolVar(&selectAll, "a", false, "select everything by default")
 	flag.BoolVar(&selectAllNoConfirm, "A", false, "select and update everything without confirmation")
 	flag.BoolVar(&dryRun, "d", false, "dry run, just print what will be executed")
-	flag.BoolVar(&version, "v", false, "show version information")
+	flag.BoolVar(&flagVersion, "v", false, "show version information")
 }
 
 func main() {
 	flag.Parse()
 
-	if version {
-		fmt.Printf("revision:\t%s\ndate:\t\t%s\ndirty:\t\t%v\ncompiler:\t%s\n", vcsCommit, vcsTime, vcsModified, compiler)
+	if flagVersion {
+		fmt.Printf("version:\t%srevision:\t%s\ndate:\t\t%s\ndirty:\t\t%v\ncompiler:\t%s\n", version, vcsCommit, vcsTime, vcsModified, compiler)
 		return
 	}
 

@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	version     string
 	vcsCommit   string
 	vcsTime     time.Time
 	vcsModified bool
