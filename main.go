@@ -21,9 +21,9 @@ var (
 )
 
 func init() {
-	flag.BoolVar(&selectAll, "a", false, "selects everything by default")
-	flag.BoolVar(&selectAllNoConfirm, "A", false, "selects and updates everything by default without UI")
-	flag.BoolVar(&dryRun, "d", false, "does not run go get if true")
+	flag.BoolVar(&selectAll, "a", false, "select everything by default")
+	flag.BoolVar(&selectAllNoConfirm, "A", false, "select and update everything without confirmation")
+	flag.BoolVar(&dryRun, "d", false, "dry run, just print what will be executed")
 }
 
 func main() {
