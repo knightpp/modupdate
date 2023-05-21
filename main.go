@@ -53,8 +53,17 @@ func run() error {
 	return errors.Join(errs...)
 }
 
-func updateGoMod(path string) error {
-	modules, err := parseDirectDeps(path)
+func updateGoMod(gomodPath string) error {
+	fi, err := os.Stat(gomodPath)
+	if err != nil {
+		return fmt.Errorf("stat %q: %w", gomodPath, err)
+	}
+
+	if fi.IsDir() {
+		gomodPath = filepath.Join(gomodPath, "go.mod")
+	}
+
+	modules, err := parseDirectDeps(gomodPath)
 	if err != nil {
 		return fmt.Errorf("parse direct deps: %w", err)
 	}
@@ -64,7 +73,7 @@ func updateGoMod(path string) error {
 	}
 
 	if selectAllNoConfirm {
-		return runGoGet(path, modulesToPaths(modules))
+		return runGoGet(gomodPath, modulesToPaths(modules))
 	}
 
 	selected, err := runUI(modules)
@@ -76,7 +85,7 @@ func updateGoMod(path string) error {
 		return errors.New("no modules selected")
 	}
 
-	return runGoGet(path, modulesToPaths(selected))
+	return runGoGet(gomodPath, modulesToPaths(selected))
 }
 
 func parseDirectDeps(path string) ([]module.Version, error) {
