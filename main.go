@@ -33,7 +33,7 @@ func main() {
 
 	if flagVersion {
 		if version != "" {
-			fmt.Println("version:\t", version)
+			fmt.Printf("version:\t%s\n", version)
 		}
 		fmt.Printf("revision:\t%s\ndate:\t\t%s\ndirty:\t\t%v\ncompiler:\t%s\n", vcsCommit, vcsTime, vcsModified, compiler)
 		return
