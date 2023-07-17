@@ -7,3 +7,8 @@ Tool to update direct dependencies in go.mod
 ```shell
 go install github.com/knightpp/modupdate@latest
 ```
+
+### nix install
+```shell
+nix profile install github:knightpp/modupdate
+```
