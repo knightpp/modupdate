@@ -31,7 +31,7 @@
       });
 
       packages = forAllSystems
-        ({ pkgs }: {
+        ({ pkgs }: rec {
           default = pkgs.buildGoModule
             {
               name = "modupdate";
@@ -44,6 +44,31 @@
                 homepage = "https://github.com/knightpp/modupdate";
                 license = licenses.mit;
                 maintainers = with maintainers; [ knightpp ];
+              };
+            };
+
+          # NOTE: Do not use this, it's just an example for my own use
+          container =
+            # docker run --rm -i --tty -v (pwd):/src modupdate
+            pkgs.dockerTools.buildImage {
+              name = "modupdate";
+              tag = "latest";
+              # created = "now"; # if you want correct timestamp
+              copyToRoot = pkgs.buildEnv {
+                name = "modupdate-root";
+                paths = [
+                  default
+                  pkgs.go
+                  pkgs.cacert # x509 certificates to pull from https
+                ];
+                pathsToLink = [
+                  "/bin"
+                  "/etc/ssl" # include x509 certificates
+                ];
+              };
+              config = {
+                Cmd = [ "modupdate" ];
+                WorkingDir = "/src";
               };
             };
         });
