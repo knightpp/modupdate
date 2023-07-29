@@ -31,46 +31,52 @@
       });
 
       packages = forAllSystems
-        ({ pkgs }: rec {
-          default = pkgs.buildGoModule
-            {
+        ({ pkgs }:
+          let
+            path = builtins.path {
               name = "modupdate";
-              src = pkgs.nix-gitignore.gitignoreSource [ ] ./.;
-              # vendorSha256 = pkgs.lib.fakeSha256; # uncomment to get error with real sha256
-              vendorSha256 = "sha256-CnN6DdwH/k6FyLIjD/RxHgLptevyuBQg1Ho6tAcBR5U=";
-
-              meta = with pkgs.lib; {
-                description = "Tool to update direct dependencies in go.mod";
-                homepage = "https://github.com/knightpp/modupdate";
-                license = licenses.mit;
-                maintainers = with maintainers; [ knightpp ];
-              };
+              path = ./.;
             };
+            modupdate = pkgs.buildGoModule
+              {
+                name = "modupdate";
+                src = pkgs.nix-gitignore.gitignoreSource [ ] path;
+                vendorSha256 = "sha256-CnN6DdwH/k6FyLIjD/RxHgLptevyuBQg1Ho6tAcBR5U=";
 
-          # NOTE: Do not use this, it's just an example for my own use
-          container =
-            # docker run --rm -i --tty -v (pwd):/src modupdate
-            pkgs.dockerTools.buildImage {
-              name = "modupdate";
-              tag = "latest";
-              # created = "now"; # if you want correct timestamp
-              copyToRoot = pkgs.buildEnv {
-                name = "modupdate-root";
-                paths = [
-                  default
-                  pkgs.go
-                  pkgs.cacert # x509 certificates to pull from https
-                ];
-                pathsToLink = [
-                  "/bin"
-                  "/etc/ssl" # include x509 certificates
-                ];
+                meta = with pkgs.lib; {
+                  description = "Tool to update direct dependencies in go.mod";
+                  homepage = "https://github.com/knightpp/modupdate";
+                  license = licenses.mit;
+                  maintainers = with maintainers; [ knightpp ];
+                };
               };
-              config = {
-                Cmd = [ "modupdate" ];
-                WorkingDir = "/src";
+          in
+          {
+            default = modupdate;
+            # NOTE: Do not use this, it's just an example for my own use
+            container =
+              # docker run --rm -i --tty -v (pwd):/src modupdate
+              pkgs.dockerTools.buildImage {
+                name = "modupdate";
+                tag = "latest";
+                # created = "now"; # if you want correct timestamp
+                copyToRoot = pkgs.buildEnv {
+                  name = "modupdate-root";
+                  paths = [
+                    modupdate
+                    pkgs.go
+                    pkgs.cacert # x509 certificates to pull from https
+                  ];
+                  pathsToLink = [
+                    "/bin"
+                    "/etc/ssl" # include x509 certificates
+                  ];
+                };
+                config = {
+                  Cmd = [ "modupdate" ];
+                  WorkingDir = "/src";
+                };
               };
-            };
-        });
+          });
     };
 }
