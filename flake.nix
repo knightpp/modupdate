@@ -41,7 +41,7 @@
               {
                 name = "modupdate";
                 src = pkgs.nix-gitignore.gitignoreSource [ ] path;
-                vendorSha256 = "sha256-CnN6DdwH/k6FyLIjD/RxHgLptevyuBQg1Ho6tAcBR5U=";
+                vendorSha256 = "sha256-XU4kLbEAPCL8mNk4omk2OIijKdiiAsJKBfoKkJJfHkI=";
 
                 meta = with pkgs.lib; {
                   description = "Tool to update direct dependencies in go.mod";
