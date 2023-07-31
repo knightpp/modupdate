@@ -37,25 +37,21 @@
               name = "modupdate";
               path = ./.;
             };
-            modupdate = pkgs.buildGoModule
-              {
-                name = "modupdate";
-                src = pkgs.nix-gitignore.gitignoreSource [ ] path;
-                vendorSha256 = "sha256-XU4kLbEAPCL8mNk4omk2OIijKdiiAsJKBfoKkJJfHkI=";
+            modupdate = pkgs.buildGoModule {
+              name = "modupdate";
+              src = pkgs.nix-gitignore.gitignoreSource [ ] path;
+              vendorSha256 = "sha256-XU4kLbEAPCL8mNk4omk2OIijKdiiAsJKBfoKkJJfHkI=";
 
-                meta = with pkgs.lib; {
-                  description = "Tool to update direct dependencies in go.mod";
-                  homepage = "https://github.com/knightpp/modupdate";
-                  license = licenses.mit;
-                  maintainers = with maintainers; [ knightpp ];
-                };
+              ldflags = [ "-s" "-w" ];
+
+              meta = with pkgs.lib; {
+                description = "Tool to update direct dependencies in go.mod";
+                homepage = "https://github.com/knightpp/modupdate";
+                license = licenses.mit;
+                maintainers = with maintainers; [ knightpp ];
               };
-          in
-          {
-            default = modupdate;
-            # NOTE: Do not use this, it's just an example for my own use
-            container =
-              # docker run --rm -i --tty -v (pwd):/src modupdate
+            };
+            container = # docker run --rm -i --tty -v (pwd):/src modupdate
               pkgs.dockerTools.buildImage {
                 name = "modupdate";
                 tag = "latest";
@@ -77,6 +73,11 @@
                   WorkingDir = "/src";
                 };
               };
+          in
+          {
+            default = modupdate;
+            # NOTE: Do not use this, it's just an example for my own use
+            inherit container;
           });
     };
 }
