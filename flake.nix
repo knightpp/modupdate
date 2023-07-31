@@ -37,12 +37,18 @@
               name = "modupdate";
               path = ./.;
             };
+            gitRev = if (self ? rev) then self.rev else "dirty";
             modupdate = pkgs.buildGoModule {
               name = "modupdate";
               src = pkgs.nix-gitignore.gitignoreSource [ ] path;
               vendorSha256 = "sha256-XU4kLbEAPCL8mNk4omk2OIijKdiiAsJKBfoKkJJfHkI=";
 
-              ldflags = [ "-s" "-w" ];
+              ldflags = [
+                "-s"
+                "-w"
+                "-X 'main.version=${self.shortRev or ""}'"
+                "-X 'main.vcsCommit=${gitRev}'"
+              ];
 
               meta = with pkgs.lib; {
                 description = "Tool to update direct dependencies in go.mod";
