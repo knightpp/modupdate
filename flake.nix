@@ -28,7 +28,7 @@
         # The Nix packages provided in the environment
         packages = with pkgs; [
           go_1_20
-          gotools # Go tools like goimports, godoc, and others
+          go-tools # Go tools like goimports, godoc, and others
         ];
       };
     });
