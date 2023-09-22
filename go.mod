@@ -1,6 +1,6 @@
 module github.com/knightpp/modupdate
 
-go 1.20
+go 1.21
 
 require (
 	github.com/koki-develop/go-fzf v0.15.0
