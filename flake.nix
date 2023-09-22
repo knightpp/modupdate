@@ -41,9 +41,7 @@
     packages =
       forAllSystems
       ({pkgs}: rec {
-        default = pkgs.callPackage ./modupdate.nix {
-          self = self;
-        };
+        default = pkgs.callPackage ./modupdate.nix {};
 
         # NOTE: Do not use this, it's just an example for my own use
         container = pkgs.callPackage ./container.nix {
