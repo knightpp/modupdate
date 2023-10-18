@@ -6,11 +6,11 @@ on:
       - "main"
   pull_request:
     paths:
-      - *.nix
-      - flake.lock
-      - go.mod
-      - go.sum
-      - *.go
+      - "*.nix"
+      - "flake.lock"
+      - "go.mod"
+      - "go.sum"
+      - "*.go"
 
 jobs:
   build-and-cache:
