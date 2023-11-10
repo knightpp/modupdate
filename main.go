@@ -15,23 +15,25 @@ import (
 )
 
 var (
-	selectAll          bool
-	selectAllNoConfirm bool
-	dryRun             bool
-	flagVersion        bool
+	fSelectAll          bool
+	fSelectAllNoConfirm bool
+	fDryRun             bool
+	fVersion            bool
+	fSort               bool
 )
 
 func init() {
-	flag.BoolVar(&selectAll, "a", false, "select everything by default")
-	flag.BoolVar(&selectAllNoConfirm, "A", false, "select and update everything without confirmation")
-	flag.BoolVar(&dryRun, "d", false, "dry run, just print what will be executed")
-	flag.BoolVar(&flagVersion, "v", false, "show version information")
+	flag.BoolVar(&fSelectAll, "a", false, "select everything by default")
+	flag.BoolVar(&fSelectAllNoConfirm, "A", false, "select and update everything without confirmation")
+	flag.BoolVar(&fDryRun, "d", false, "dry run, just print what will be executed")
+	flag.BoolVar(&fVersion, "v", false, "show version information")
+	flag.BoolVar(&fSort, "s", false, "sort require lines")
 }
 
 func main() {
 	flag.Parse()
 
-	if flagVersion {
+	if fVersion {
 		if version != "" {
 			fmt.Printf("version:\t%s\n", version)
 		}
@@ -73,17 +75,64 @@ func updateGoMod(gomodPath string) error {
 		gomodPath = filepath.Join(gomodPath, "go.mod")
 	}
 
-	modules, err := parseDirectDeps(gomodPath)
+	gomod, err := parseGoMod(gomodPath)
 	if err != nil {
 		return fmt.Errorf("parse direct deps: %w", err)
 	}
+
+	modules := extractDirectDeps(gomod)
 
 	if len(modules) == 0 {
 		return errors.New("no direct dependencies found")
 	}
 
-	if selectAllNoConfirm {
+	if fSelectAllNoConfirm {
 		return runGoGet(gomodPath, modulesToPaths(modules))
+	}
+
+	if fSort {
+		fmt.Println("sorting...")
+		gomod.DropToolchainStmt()
+
+		var direct, indirect []modfile.Require
+		for _, req := range gomod.Require {
+			if req.Indirect {
+				indirect = append(indirect, *req)
+			} else {
+				direct = append(direct, *req)
+			}
+			gomod.DropRequire(req.Mod.Path)
+		}
+
+		gomod.Cleanup()
+
+		for _, dep := range direct {
+			gomod.AddNewRequire(dep.Mod.Path, dep.Mod.Version, false)
+		}
+		for _, dep := range indirect {
+			gomod.AddNewRequire(dep.Mod.Path, dep.Mod.Version, true)
+		}
+
+		gomod.Cleanup()
+
+		gomod.SetRequireSeparateIndirect(gomod.Require)
+
+		bytes, err := gomod.Format()
+		if err != nil {
+			return fmt.Errorf("format gomod: %w", err)
+		}
+
+		info, err := os.Stat(gomodPath)
+		if err != nil {
+			return fmt.Errorf("stat gomod: %w", err)
+		}
+
+		err = os.WriteFile(gomodPath, bytes, info.Mode())
+		if err != nil {
+			return fmt.Errorf("write gomod: %w", err)
+		}
+
+		return nil
 	}
 
 	selected, err := runUI(modules)
@@ -98,7 +147,7 @@ func updateGoMod(gomodPath string) error {
 	return runGoGet(gomodPath, modulesToPaths(selected))
 }
 
-func parseDirectDeps(path string) ([]module.Version, error) {
+func parseGoMod(path string) (*modfile.File, error) {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read file: %w", err)
@@ -109,8 +158,12 @@ func parseDirectDeps(path string) ([]module.Version, error) {
 		return nil, fmt.Errorf("parse go.mod: %w", err)
 	}
 
+	return ast, nil
+}
+
+func extractDirectDeps(gomod *modfile.File) []module.Version {
 	var modules []module.Version
-	for _, req := range ast.Require {
+	for _, req := range gomod.Require {
 		if req.Indirect {
 			continue
 		}
@@ -118,7 +171,7 @@ func parseDirectDeps(path string) ([]module.Version, error) {
 		modules = append(modules, req.Mod)
 	}
 
-	return modules, nil
+	return modules
 }
 
 func runUI(modules []module.Version) ([]module.Version, error) {
@@ -128,7 +181,7 @@ func runUI(modules []module.Version) ([]module.Version, error) {
 	}
 
 	var findOpts []fzf.FindOption
-	if selectAll {
+	if fSelectAll {
 		findOpts = append(findOpts, fzf.WithPreselectAll(true))
 	}
 
@@ -151,7 +204,7 @@ func runUI(modules []module.Version) ([]module.Version, error) {
 func runGoGet(path string, selected []string) error {
 	fmt.Println("go get", strings.Join(selected, " "))
 
-	if dryRun {
+	if fDryRun {
 		return nil
 	}
 
