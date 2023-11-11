@@ -91,48 +91,7 @@ func updateGoMod(gomodPath string) error {
 	}
 
 	if fSort {
-		fmt.Println("sorting...")
-		gomod.DropToolchainStmt()
-
-		var direct, indirect []modfile.Require
-		for _, req := range gomod.Require {
-			if req.Indirect {
-				indirect = append(indirect, *req)
-			} else {
-				direct = append(direct, *req)
-			}
-			gomod.DropRequire(req.Mod.Path)
-		}
-
-		gomod.Cleanup()
-
-		for _, dep := range direct {
-			gomod.AddNewRequire(dep.Mod.Path, dep.Mod.Version, false)
-		}
-		for _, dep := range indirect {
-			gomod.AddNewRequire(dep.Mod.Path, dep.Mod.Version, true)
-		}
-
-		gomod.Cleanup()
-
-		gomod.SetRequireSeparateIndirect(gomod.Require)
-
-		bytes, err := gomod.Format()
-		if err != nil {
-			return fmt.Errorf("format gomod: %w", err)
-		}
-
-		info, err := os.Stat(gomodPath)
-		if err != nil {
-			return fmt.Errorf("stat gomod: %w", err)
-		}
-
-		err = os.WriteFile(gomodPath, bytes, info.Mode())
-		if err != nil {
-			return fmt.Errorf("write gomod: %w", err)
-		}
-
-		return nil
+		return sortImports(gomodPath, gomod)
 	}
 
 	selected, err := runUI(modules)
@@ -228,4 +187,44 @@ func modulesToPaths(modules []module.Version) []string {
 		paths[i] = modules[i].Path
 	}
 	return paths
+}
+
+func sortImports(gomodPath string, gomod *modfile.File) error {
+	var direct, indirect []modfile.Require
+	for _, req := range gomod.Require {
+		if req.Indirect {
+			indirect = append(indirect, *req)
+		} else {
+			direct = append(direct, *req)
+		}
+		gomod.DropRequire(req.Mod.Path)
+	}
+
+	for _, dep := range direct {
+		gomod.AddNewRequire(dep.Mod.Path, dep.Mod.Version, false)
+	}
+	for _, dep := range indirect {
+		gomod.AddNewRequire(dep.Mod.Path, dep.Mod.Version, true)
+	}
+
+	gomod.Cleanup()
+
+	gomod.SetRequireSeparateIndirect(gomod.Require)
+
+	bytes, err := gomod.Format()
+	if err != nil {
+		return fmt.Errorf("format gomod: %w", err)
+	}
+
+	info, err := os.Stat(gomodPath)
+	if err != nil {
+		return fmt.Errorf("stat gomod: %w", err)
+	}
+
+	err = os.WriteFile(gomodPath, bytes, info.Mode())
+	if err != nil {
+		return fmt.Errorf("write gomod: %w", err)
+	}
+
+	return nil
 }
