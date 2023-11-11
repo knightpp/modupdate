@@ -34,6 +34,9 @@
         packages = with pkgs; [
           go_1_21
           go-tools
+          gopls
+          delve
+          gomodifytags
         ];
       };
     });
