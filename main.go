@@ -17,6 +17,7 @@ import (
 var (
 	fSelectAll          bool
 	fSelectAllNoConfirm bool
+	fHidden             bool
 	fDryRun             bool
 	fVersion            bool
 	fSort               bool
@@ -28,6 +29,7 @@ func init() {
 	flag.BoolVar(&fDryRun, "d", false, "dry run, just print what will be executed")
 	flag.BoolVar(&fVersion, "v", false, "show version information")
 	flag.BoolVar(&fSort, "s", false, "sort require lines")
+	flag.BoolVar(&fHidden, "h", false, "show indirect")
 }
 
 func main() {
@@ -80,7 +82,7 @@ func updateGoMod(gomodPath string) error {
 		return fmt.Errorf("parse direct deps: %w", err)
 	}
 
-	modules := extractDirectDeps(gomod)
+	modules := extractDeps(gomod)
 
 	if len(modules) == 0 {
 		return errors.New("no direct dependencies found")
@@ -120,10 +122,10 @@ func parseGoMod(path string) (*modfile.File, error) {
 	return ast, nil
 }
 
-func extractDirectDeps(gomod *modfile.File) []module.Version {
+func extractDeps(gomod *modfile.File) []module.Version {
 	var modules []module.Version
 	for _, req := range gomod.Require {
-		if req.Indirect {
+		if !fHidden && req.Indirect {
 			continue
 		}
 
