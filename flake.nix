@@ -51,10 +51,8 @@
         };
       });
 
-    overlays = forAllSystems ({pkgs}: {
-      default = final: prev: {
-        modupdate = pkgs.callPackage ./modupdate.nix {};
-      };
-    });
+    overlays.default = final: prev: {
+      inherit (self.packages.${final.system}) modupdate;
+    };
   };
 }
