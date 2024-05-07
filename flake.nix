@@ -46,10 +46,15 @@
       ({pkgs}: rec {
         default = pkgs.callPackage ./modupdate.nix {};
 
-        # NOTE: Do not use this, it's just an example for my own use
         container = pkgs.callPackage ./container.nix {
           modupdate = default;
         };
       });
+
+    overlays = forAllSystems ({pkgs}: {
+      default = final: prev: {
+        modupdate = pkgs.callPackage ./modupdate.nix {};
+      };
+    });
   };
 }
