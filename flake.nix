@@ -46,6 +46,8 @@
       ({pkgs}: rec {
         default = pkgs.callPackage ./modupdate.nix {};
 
+        modupdate = default;
+
         container = pkgs.callPackage ./container.nix {
           modupdate = default;
         };
