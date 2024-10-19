@@ -1,10 +1,12 @@
 module github.com/knightpp/modupdate
 
-go 1.21
+go 1.22.0
+
+toolchain go1.22.6
 
 require (
 	github.com/koki-develop/go-fzf v0.15.0
-	golang.org/x/mod v0.17.0
+	golang.org/x/mod v0.21.0
 )
 
 require (
