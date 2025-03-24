@@ -8,53 +8,63 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-  }: let
-    # Systems supported
-    allSystems = [
-      "x86_64-linux"
-      "aarch64-linux"
-      "x86_64-darwin"
-      "aarch64-darwin"
-    ];
+  outputs =
+    {
+      self,
+      nixpkgs,
+    }:
+    let
+      # Systems supported
+      allSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
 
-    # Helper to provide system-specific attributes
-    forAllSystems = f:
-      nixpkgs.lib.genAttrs allSystems (system:
-        f {
-          pkgs = import nixpkgs {inherit system;};
-        });
-  in {
-    # Development environment output
-    devShells = forAllSystems ({pkgs}: {
-      default = pkgs.mkShell {
-        # The Nix packages provided in the environment
-        packages = with pkgs; [
-          go_1_21
-          go-tools
-          gopls
-          delve
-          gomodifytags
-        ];
-      };
-    });
+      # Helper to provide system-specific attributes
+      forAllSystems =
+        f:
+        nixpkgs.lib.genAttrs allSystems (
+          system:
+          f {
+            pkgs = import nixpkgs { inherit system; };
+          }
+        );
+    in
+    {
+      # Development environment output
+      devShells = forAllSystems (
+        { pkgs }:
+        {
+          default = pkgs.mkShell {
+            # The Nix packages provided in the environment
+            packages = with pkgs; [
+              go_1_24
+              go-tools
+              gopls
+              delve
+              gomodifytags
+            ];
+          };
+        }
+      );
 
-    packages =
-      forAllSystems
-      ({pkgs}: rec {
-        default = pkgs.callPackage ./modupdate.nix {};
+      packages = forAllSystems (
+        { pkgs }:
+        rec {
+          default = pkgs.callPackage ./modupdate.nix { };
 
-        modupdate = default;
-
-        container = pkgs.callPackage ./container.nix {
           modupdate = default;
-        };
-      });
 
-    overlays.default = final: prev: {
-      inherit (self.packages.${final.system}) modupdate;
+          container = pkgs.callPackage ./container.nix {
+            modupdate = default;
+          };
+        }
+      );
+
+      overlays.default = final: prev: {
+        inherit (self.packages.${final.system}) modupdate;
+      };
     };
-  };
 }
