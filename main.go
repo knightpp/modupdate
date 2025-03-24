@@ -203,7 +203,11 @@ func sortImports(gomodPath string, gomod *modfile.File) error {
 		} else {
 			direct = append(direct, *req)
 		}
-		gomod.DropRequire(req.Mod.Path)
+
+		err := gomod.DropRequire(req.Mod.Path)
+		if err != nil {
+			return fmt.Errorf("drop require: %w", err)
+		}
 	}
 
 	for _, dep := range direct {
