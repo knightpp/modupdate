@@ -136,7 +136,11 @@ func extractDeps(gomod *modfile.File) []module.Version {
 }
 
 func runUI(modules []module.Version) ([]module.Version, error) {
-	f, err := fzf.New(fzf.WithNoLimit(true))
+	keymap := fzf.KeyMap{
+		Toggle: []string{"tab", "left", "right"},
+	}
+
+	f, err := fzf.New(fzf.WithNoLimit(true), fzf.WithKeyMap(keymap))
 	if err != nil {
 		return nil, fmt.Errorf("create fzf: %w", err)
 	}
