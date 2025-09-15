@@ -1,5 +1,9 @@
 # modupdate
 
+## [MOVED TO CODEBERG](https://codeberg.org/knightpp/modupdate)
+
+<https://codeberg.org/knightpp/modupdate>
+
 Tool to update direct dependencies in go.mod
 
 ## Installation
